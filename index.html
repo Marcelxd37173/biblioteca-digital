@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIBEYUM</title>
+    <link rel="stylesheet" href="decoracion.css">
+    </head>
+<body>
+    <div class="container">
+        <header>
+            <h1>LIBEYUM</h1>
+            <p class="subtitle">Bienvenido a una libreria virtual, aqui encontraras material bibliografico que necesites dentro de la Unidad Educativa Tecnico Humanistico Puerto de Rosario</p>
+        </header>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" class="search-input" placeholder="Buscar documentos por título o descripción...">
+        </div>
+
+        <div class="categories">
+            <h3 class="category-title">Categorías</h3>
+            <div class="category-buttons">
+                <button class="category-btn active" onclick="filterByCategory('todo')">Todos</button>
+                <button class="category-btn" onclick="filterByCategory('c')">Cartillas</button>
+                <button class="category-btn" onclick="filterByCategory('l')">Lenguaje</button>
+                <button class="category-btn" onclick="filterByCategory('s')">Sociales</button>
+                <button class="category-btn" onclick="filterByCategory('at')">Areas Tecnicas</button>
+                <button class="category-btn" onclick="filterByCategory('informe')">Informes</button>
+            </div>
+        </div>
+
+        <div id="documentsContainer" class="documents-grid">
+            <!-- Los documentos se generan con JavaScript -->
+        </div>
+
+        <footer>
+            <p>&copy; Proyecto hecho por Marcelo y Candyce</p>
+        </footer>
+    </div>
+
+    <script>
+        // Base de datos de documentos (aquí puedes agregar tus documentos)
+        const documentos = [
+            {
+                id: 1,
+                titulo: "Cartilla de 2do",
+                descripcion: "Cartilla general de segundo de secundaria",
+                categoria: "c",
+                fecha: "17/09/25",
+                tipo: "pdf",
+                url: "https://drive.google.com/file/d/1mt-JLQPLEQnWKtEQGlWJbVZkgUflRdZK/view?usp=drivesdk"
+            },
+            {
+                id: 2,
+                titulo: "Cartilla de 6to",
+                descripcion: "Cartilla general de 6to de Secundaria",
+                categoria: "c",
+                fecha: "2025-09-17",
+                tipo: "pdf",
+                url: "https://drive.google.com/file/d/1-fAp8krJqEp-80Lll-RmXeuQQmCaHzum/view?usp=drivesdk"
+            },
+            {
+                id: 3,
+                titulo: "Socavones de angustia",
+                descripcion: "Libro del autor Fernando Ramirez Velarde",
+                categoria: "l",
+                fecha: "2025-9-17",
+                tipo: "pdf",
+                url: "https://docs.google.com/document/d/1zobP53DOKS2wnp0N4zGhPNvCdQ1PO_-s/edit?usp=drivesdk&ouid=107241095795546339489&rtpof=true&sd=true"
+            },
+            {
+                id: 4,
+                titulo: "cartilla de 5to",
+                descripcion: "cartilla de 5to de secundaria",
+                categoria: "c",
+                fecha: "2025-04-10",
+                tipo: "pdf",
+                url: "https://drive.google.com/file/d/1eKyA7E-vLopCjbVQXT9MVZDd8BXtVBCQ/view?usp=drivesdk"
+            },
+            {
+                id: 5,
+                titulo: "cartilla de 1ro",
+                descripcion: "cartilla de 1ro de secundaria",
+                categoria: "c",
+                fecha: "2025-04-10",
+                tipo: "pdf",
+                url: "https://drive.google.com/file/d/1cQRiP3tR8nx11zT72wEtu98AWzRhuKjt/view?usp=drivesdk"
+            },
+            {
+                id: 6,
+                titulo: "cartilla de 3ro",
+                descripcion: "cartilla de 3ro de secundaria",
+                categoria: "c",
+                fecha: "2025-10-04",
+                tipo: "pdf",
+                url: "https://drive.google.com/file/d/1zvVkWUjF4kU4JB2y0XArBjoQTugrcGNW/view?usp=drivesdk"
+            },
+            {
+                Id: 7,
+                titulo: "cartilla de 4to de secundaria",
+                descripcion:" cartilla general de 4to de secundaria",
+                categoria:"c",
+                fecha: "2025-10-01",
+                tipo:"pdf",
+                url: "https://drive.google.com/file/d/1NfNgrRGulb9u-YU6hNGdsfprHBgCDE3-/view?usp=drivesdk"
+            },
+             {
+                Id: 8,
+                titulo: "mi planta naranja lima",
+                descripcion:"libro solicitado en lenguaje",
+                categoria:"l",
+                fecha: "2025-10-01",
+                tipo:"pdf",
+                url: "https://drive.google.com/file/d/1NiHJKG9qvXWBVwgf53M_J_iZL3v9U-5u/view?usp=drivesdk"
+            },
+             {
+                Id: 9,
+                titulo: "entre el amor y al locura",
+                descripcion:"este libro describe la vida de adolecentes",
+                categoria:"l",
+                fecha: "2025-10-01",
+                tipo:"pdf",
+                url: "https://drive.google.com/file/d/1BxtBz-khfrkWumvadjCGQ4che0lNBjxA/view?usp=drivesdk"
+            },
+             {
+                Id: 10,
+                titulo: "Padre rico padre pobre",
+                descripcion:"libro padre rico padre pobre este libro es solicitando dentro de la materia de lenguaje",
+                categoria:"l",
+                fecha: "2025-10-01",
+                tipo:"pdf",
+                url: "https://drive.google.com/file/d/19ogpZ07xkXhI6b1cpBEBESBsFHg3c0p0/view?usp=drivesdk"
+            }
+        ];
+
+        // Función para obtener icono según el tipo de archivo
+        function getFileIcon(tipo) {
+            const iconos = {
+                'pdf': '📄',
+                'docx': '📝',
+                'doc': '📝',
+                'pptx': '📊',
+                'ppt': '📊',
+                'xlsx': '📈',
+                'txt': '📃'
+            };
+            return iconos[tipo] || '📄';
+        }
+
+        // Función para formatear fecha
+        function formatDate(fechaString) {
+            const fecha = new Date(fechaString);
+            return fecha.toLocaleDateString('es-ES');
+        }
+
+        // Función para renderizar documentos
+        function renderDocuments(docs) {
+            const container = document.getElementById('documentsContainer');
+            
+            if (docs.length === 0) {
+                container.innerHTML = '<div class="no-results">No se encontraron documentos</div>';
+                return;
+            }
+
+            const html = docs.map(doc => `
+                <div class="document-card" onclick="openDocument('${doc.url}')">
+                    <div class="document-icon">${getFileIcon(doc.tipo)}</div>
+                    <div class="document-title">${doc.titulo}</div>
+                    <div class="document-description">${doc.descripcion}</div>
+                    <div class="document-meta">
+                        <span>${formatDate(doc.fecha)}</span>
+                        <span class="document-category">${doc.categoria}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+
+        // Función para filtrar por categoría
+        function filterByCategory(categoria) {
+            // Actualizar botones activos
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            // Filtrar documentos
+            const filteredDocs = categoria === 'all'
+                ? documentos 
+                : documentos.filter(doc => doc.categoria === categoria);
+            
+            renderDocuments(filteredDocs);
+        }
+
+        // Función de búsqueda
+        function searchDocuments(query) {
+            const filteredDocs = documentos.filter(doc => 
+                doc.titulo.toLowerCase().includes(query.toLowerCase()) ||
+                doc.descripcion.toLowerCase().includes(query.toLowerCase())
+            );
+            renderDocuments(filteredDocs);
+        }
+
+        // Función para abrir documento
+        function openDocument(url) {
+            if (url === '#') {
+                alert('Este es un documento de ejemplo. Reemplaza la URL con el enlace real del archivo.');
+                return;
+            }
+            window.open(url, '_blank');
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Renderizar todos los documentos al cargar
+            renderDocuments(documentos);
+
+            // Configurar búsqueda
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                const query = this.value;
+                if (query.trim() === '') {
+                    renderDocuments(documentos);
+                } else {
+                    searchDocuments(query);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
